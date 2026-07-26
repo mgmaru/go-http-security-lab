@@ -115,8 +115,7 @@ ADRには、少なくとも次を記載します。
 ```text
 go-http-security-lab/
 ├── go.mod
-├── cmd/
-├── internal/
+├── main.go
 ├── docs/
 └── README.md
 ```
@@ -133,15 +132,17 @@ github.com/example/go-http-security-lab/src/...
 
 #### 実行開始点
 
-Web APIの実行開始点として、`cmd/api/main.go`を使用できます。
+初期段階では単一バイナリを前提とし、Web APIの実行開始点をリポジトリ直下の`main.go`に置きます。
 
 ```text
-cmd/
-└── api/
-    └── main.go
+go-http-security-lab/
+├── go.mod
+└── main.go
 ```
 
-`cmd`は`command`の略で、実行可能プログラムの入口を置くために使われる慣習的なディレクトリ名です。
+複数の実行可能プログラムが必要になった場合は、その時点で`cmd/`の導入と、既存の実行開始点を`cmd/api/main.go`へ移すことを検討します。
+
+`cmd`は`command`の略で、実行可能プログラムの入口を置くために使われる慣習的なディレクトリ名ですが、単一バイナリの初期段階では必須としません。
 
 ただし、`main.go`に何を置き、どの処理を別のパッケージへ分けるかは、あらかじめ固定しません。
 
@@ -158,6 +159,8 @@ cmd/
 #### `internal/`の扱い
 
 `internal/`は、このアプリ内部でのみ使用するパッケージを置く候補です。
+
+単一バイナリのまま処理を別のパッケージへ分ける必要が生じた場合は、`internal/`への配置を検討します。どの処理を分け、どのような責務や構成にするかは、その必要が生じた時点の設計で決めます。
 
 ただし、最初から`handler/`、`service/`、`repository/`などの完成形を作りません。
 
@@ -182,10 +185,10 @@ cmd/
 
 #### 依存関係を考える
 
-`cmd/api/main.go`から`internal/`の処理を利用する構成は一つの候補です。
+ルートの`main.go`から`internal/`の処理を利用する構成は一つの候補です。将来`cmd/`を導入した場合は、`cmd/api/main.go`が同じ役割を引き継ぎます。
 
 ```text
-cmd/api
+main.go
   ↓
 internal
 ```
