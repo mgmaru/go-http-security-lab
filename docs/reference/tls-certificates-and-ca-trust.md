@@ -481,6 +481,8 @@ mTLS、社内VPN、端末認証などでは、社員や端末ごとのクライ�
 
 サーバーがクラウド上にあるか、オンプレ環境にあるかは、公開CAによる証明書発行の本質的な条件ではありません。
 
+TLSとSSLの用語、証明書の有効期限、管理責任、自動更新の詳細は、[TLSとSSLの違い、サーバー証明書の管理と自動更新](tls-vs-ssl-and-certificate-renewal.md)にまとめています。
+
 重要なのは次の点です。
 
 - 証明書に記載するドメインを管理している
@@ -725,6 +727,7 @@ curl -k https://example.com/
 
 ## 18. 参考資料
 
+- [TLSとSSLの違い、サーバー証明書の管理と自動更新](tls-vs-ssl-and-certificate-renewal.md)
 - [curl：TLS Certificate Verification](https://curl.se/docs/sslcerts.html)
 - [Let's Encrypt：Challenge Types](https://letsencrypt.org/docs/challenge-types/)
 - [Let's Encrypt：Certificates for localhost](https://letsencrypt.org/docs/certificates-for-localhost/)
