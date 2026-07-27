@@ -83,7 +83,7 @@ hiroaki@HiroakinoMacBook-Air progress % curl -v https://www.pokemon.co.jp/
 </body></html>% 
 ```
 5. 観察：
-- 接続、TLS情報「*」について
+#### 接続、TLS情報「*」について
 - `ALPN: curl offers h2,http/1.1`：TLS接続時に「この後どのアプリケーションプロトコルを使うか」を決める仕組み。クライアントが`h2(HTTP/2)`もしくは`http/1.1(HTTP/1.1)`をサーバに提案している。サーバがその中からプロトコルを選択する。
 - TLSハンドシェイク：暗号化方式を決め、証明書を確認し、通信に使う鍵を安全に共有する一連の手続きです。
 ```
@@ -120,9 +120,40 @@ hiroaki@HiroakinoMacBook-Air progress % curl -v https://www.pokemon.co.jp/
 * [HTTP/2] [1] [user-agent: curl/8.7.1] // リクエストを送信するクライアントがcurl8.7.1であることを示す
 * [HTTP/2] [1] [accept: */*] // curlがどのメディアタイムのレスポンスでも受け入れることを示す
 ```
-  - メディアタイプ：`text/html`, `aplication/json`, `image/png`, `text/css`など
-- リクエスト「>」について
-- レスポンス「<」について
+- メディアタイプ：`text/html`, `aplication/json`, `image/png`, `text/css`など
+#### リクエスト「>」について
+```
+--- リクエストの基本情報
+> GET / HTTP/2
+--- リクエストヘッダ
+> Host: www.pokemon.co.jp
+> User-Agent: curl/8.7.1
+> Accept: */*
+--- リクエストボディ 
+>
+```
+#### レスポンス「<」について
+```
+--- ステータス
+< HTTP/2 200 # 使用しているHTTPバージョン, HTTPステータスコード
+--- レスポンスヘッダー
+< content-type: text/html; charset=UTF-8 # レスポンスボディのデータ形式と文字コード
+< date: Fri, 24 Jul 2026 05:07:23 GMT # レスポンスが生成された日時
+< strict-transport-security: max-age=31536000; includeSubDomains; preload # サイトへHTTPではなく、HTTPSで接続するように指示
+< x-content-type-options: nosniff　# ブラウザによるMIMEタイプの推測を禁止するセキュリティヘッダー
+< server: Apache  # レスポンスを処理したサーバーソフトウェアの情報
+< x-cache: Hit from cloudfront # CloudFrontのキャッシュからレスポンスが返されたことを示す
+< via: 1.1 a0c8ca5c55854408aacaabfb864516d0.cloudfront.net (CloudFront)　# レスポンスが途中で経由した中継サーバーの情報
+< x-amz-cf-pop: NRT57-P1 # リクエストを処理したCloudFrontのエッジロケーションを識別する情報
+< x-amz-cf-id: stynVAgnn9bWjLQaS9fHmfDU4AjzOZzJcrpQ4bZO471Lhvn6Z91dzA== # CloudFrontがリクエストへ割り当てた識別子
+< age: 171510 # レスポンスが共有キャッシュに保存されてからの、おおよその経過時間
+--- 空行
+<
+--- レスポンスボディ
+<!DOCTYPE html>
+〜　省略〜
+</body></html>% 
+```
 ---
 2. `curl -i`でレスポンスヘッダーを確認する
 - やったこと：
