@@ -535,6 +535,7 @@ TLS証明書によって確認できるのは、「指定したドメインを�
 ## 15. 参考資料
 
 - [HTTP/1.1とHTTP/2のストリーム](http1.1-vs-http2-streams.md)
+- [`curl -v`で観察するHTTPレスポンス](http-response-structure-and-headers.md)
 - [TLS証明書と認証局による信頼](tls-certificates-and-ca-trust.md)
 - [curl：TLS Certificate Verification](https://curl.se/docs/sslcerts.html)
 - [RFC 8446：TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446.html)

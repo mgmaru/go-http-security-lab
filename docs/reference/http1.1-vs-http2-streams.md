@@ -711,6 +711,7 @@ flowchart TB
 
 ## 20. 関連ドキュメント
 
+- [`curl -v`で観察するHTTPレスポンス](http-response-structure-and-headers.md)
 - [`curl -v`で観察するTLS 1.3ハンドシェイク](tls-1.3-handshake-flow.md)
 - [TLS証明書と認証局による信頼](tls-certificates-and-ca-trust.md)
 
