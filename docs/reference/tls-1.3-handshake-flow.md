@@ -459,6 +459,8 @@ curl → サーバー
 
 その後、HTTP/2のストリームを開き、GETリクエストを送信します。
 
+HTTP/2ストリームの仕組みとHTTP/1.1との違いは、[HTTP/1.1とHTTP/2のストリーム](http1.1-vs-http2-streams.md)にまとめています。
+
 ```text
 * [HTTP/2] [1] OPENED stream for https://www.pokemon.co.jp/
 * [HTTP/2] [1] [:method: GET]
@@ -532,6 +534,7 @@ TLS証明書によって確認できるのは、「指定したドメインを�
 
 ## 15. 参考資料
 
+- [HTTP/1.1とHTTP/2のストリーム](http1.1-vs-http2-streams.md)
 - [TLS証明書と認証局による信頼](tls-certificates-and-ca-trust.md)
 - [curl：TLS Certificate Verification](https://curl.se/docs/sslcerts.html)
 - [RFC 8446：TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446.html)
