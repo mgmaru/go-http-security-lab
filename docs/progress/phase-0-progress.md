@@ -155,13 +155,38 @@ hiroaki@HiroakinoMacBook-Air progress % curl -v https://www.pokemon.co.jp/
 </body></html>% 
 ```
 ---
-2. `curl -i`でレスポンスヘッダーを確認する
-- やったこと：
-- コマンド：
-- 対象URL：
-- 結果：
-- 観察：
-### その他
+#### `curl -i`でレスポンスヘッダーを確認する
+1. やったこと：`curl -i`でGETリクエストを送信し、レスポンスヘッダを見る。
+2. コマンド：`curl -i [URL]`
+3. 対象URL：`https://www.pokemon.co.jp/`
+4. 結果：
+```
+HTTP/2 200
+content-type: text/html; charset=UTF-8
+date: Fri, 24 Jul 2026 05:07:23 GMT
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-content-type-options: nosniff
+server: Apache
+x-cache: Hit from cloudfront
+via: 1.1 6b3df82b11020ffd9f07adedfc60be70.cloudfront.net (CloudFront)
+x-amz-cf-pop: NRT57-P1
+x-amz-cf-id: VvmOIdlakIl0eL85R30r5WkdW--28JdWELZcIGG_h5gtkh1WfJNvkg==
+age: 293097
+
+<!DOCTYPE html>
+<html lang="ja">
+〜省略〜
+</body></html>% 
+```
+5. 観察：
+- 「`curl -v`でGETリクエストを送る」でみたところのレスポンスとほとんど同じ。
+- `x-amz-cf-pop: NRT57-P1`（リクエスト処理をしたCloudFrontのエッジロケーション）は、前の課題と同じ。 -> リクエストを送る場所によるので、変わらないのではないか？
+- レスポンスが中継したサーバー情報（`via`）は、変わっている。　-> これはcloudfrontは変わっているが、中継サーバは変わっていない。
+- `age`（レスポンスがキャッシュに保存されてからの経過時間）は、前の課題に比べて増えた（171510 -> 293097）
+6. 疑問
+- そもそも、cloudfrontは中継サーバではない？キャッシュサーバ？
+- cloudfrontとレスポンスの中継サーバは違う？
+- `age`：これは同一のクライアントごとに管理しているのではなく、同じリクエストに対して同じレスポンスを返す場合にキャッシュを活用している？
 ## 反省
 - 公開鍵と秘密鍵とは何かの理解が乏しい。
 ---
