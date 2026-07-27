@@ -627,6 +627,7 @@ flowchart TB
 
 ## 22. 関連ドキュメント
 
+- [CloudFrontの中継とキャッシュの仕組み](cloudfront-intermediary-and-cache.md)
 - [HTTP/1.1とHTTP/2のストリーム](http1.1-vs-http2-streams.md)
 - [`curl -v`で観察するTLS 1.3ハンドシェイク](tls-1.3-handshake-flow.md)
 - [TLS証明書と認証局による信頼](tls-certificates-and-ca-trust.md)
