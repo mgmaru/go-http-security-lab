@@ -18,6 +18,7 @@
 - フレームとストリームは何が違うのか
 - HTTP/1.1にもストリームはあるのか
 - HTTP/1.1とHTTP/2では複数リクエストの扱いがどう違うのか
+- HTTP/1.1では、なぜ1つのブラウザ・1つのタブでも複数のTCP接続を開くことがあるのか
 - HTTP/2では、なぜ1つの接続で複数リクエストを並行処理できるのか
 - ストリームはAPI、HTTPメソッド、リクエストのどれを単位に作られるのか
 - 独立したHTTPリクエストに、ストリームを設けるメリットは何か
@@ -397,17 +398,109 @@ HTTP/1.1のパイプライン処理には再試行などの扱いも複雑にな
 
 ## 10. HTTP/1.1で複数接続を使う
 
-HTTP/1.1では、並行性を高めるために、同じホストへ複数のTCP接続を作る方法が使われます。
+HTTP/1.1では、複数のリソースを並行して取得するために、同じオリジンへ複数のTCP接続を作る方法が使われます。
+
+これは、複数のブラウザやタブを開いた場合だけの話ではありません。**1つのブラウザの1つのタブでも、複数のTCP接続を開くことがあります。**
 
 ```mermaid
 flowchart LR
-    Browser["ブラウザ"]
+    Browser["1つのブラウザ<br/>1つのタブ"]
     Server["Webサーバー"]
 
     Browser -->|"TCP接続A<br/>GET /"| Server
     Browser -->|"TCP接続B<br/>GET /style.css"| Server
     Browser -->|"TCP接続C<br/>GET /app.js"| Server
     Browser -->|"TCP接続D<br/>GET /image.png"| Server
+```
+
+### 疑問：複数のTCP接続には複数のブラウザが必要か
+
+> 複数の接続が確立しているというのは、1つのクライアントPCで同じブラウザを複数立ち上げている場合なのか。
+
+いいえ。複数のブラウザ、ウィンドウ、タブは必要ありません。
+
+1つのページを開くと、ブラウザは最初にHTMLを取得します。HTMLを解析してCSS、JavaScript、画像、フォントなどを見つけると、それぞれを取得するための新しいHTTPリクエストを送ります。
+
+```mermaid
+flowchart TB
+    Operation["利用者の操作<br/>ページを1回開く"]
+    HTML["HTTPリクエスト1<br/>GET /index.html"]
+    Parse["ブラウザがHTMLを解析"]
+
+    CSS["HTTPリクエスト2<br/>GET /style.css"]
+    JS["HTTPリクエスト3<br/>GET /app.js"]
+    Image["HTTPリクエスト4<br/>GET /logo.png"]
+    Font["HTTPリクエスト5<br/>GET /font.woff2"]
+
+    Operation --> HTML --> Parse
+    Parse --> CSS
+    Parse --> JS
+    Parse --> Image
+    Parse --> Font
+```
+
+HTTP/1.1の1つの持続的接続でも、複数のリクエストを順番に処理して接続を再利用できます。しかし、それだけでは後ろのリソースが前のレスポンスを待ちやすいため、ブラウザは複数のTCP接続を使って並行性を確保します。
+
+```mermaid
+flowchart LR
+    subgraph Client["1台のPC上の1つのブラウザ"]
+        Tab["1つのタブ"]
+    end
+
+    Tab --> C1["TCP接続1<br/>HTML"]
+    Tab --> C2["TCP接続2<br/>CSS"]
+    Tab --> C3["TCP接続3<br/>JavaScript"]
+    Tab --> C4["TCP接続4<br/>画像"]
+
+    C1 --> Origin["同じオリジン"]
+    C2 --> Origin
+    C3 --> Origin
+    C4 --> Origin
+```
+
+| 数えるもの | この例での数 | 説明 |
+|---|---:|---|
+| 利用者の操作 | 1回 | ページを開いた操作 |
+| ブラウザ | 1つ | 例：Chrome |
+| タブ | 1つ | ページを表示しているタブ |
+| HTTPリクエスト | 複数 | HTML、CSS、JavaScript、画像など |
+| TCP接続 | 複数になり得る | HTTP/1.1でリクエストを並行処理するために使用 |
+
+ここでいう同じオリジンとは、物理的なオリジンサーバー1台ではなく、基本的に`スキーム + ホスト + ポート`が同じURLのグループです。URLパスはオリジンの判定に含まれません。
+
+| URL | `https://example.com/`と同じオリジンか | 理由 |
+|---|---:|---|
+| `https://example.com/style.css` | はい | スキーム、ホスト、ポートが同じ |
+| `https://example.com/app.js` | はい | URLパスが違っても同じ |
+| `http://example.com/` | いいえ | スキームが違う |
+| `https://api.example.com/` | いいえ | ホストが違う |
+| `https://example.com:8443/` | いいえ | ポートが違う |
+
+1つのオリジンの背後に、CDN、ロードバランサー、複数のアプリケーションサーバーが存在する場合もあります。
+
+```mermaid
+flowchart LR
+    Browser["ブラウザから見えるオリジン<br/>https://example.com:443"]
+    LB["CDN／ロードバランサー"]
+    App1["アプリケーションサーバー1"]
+    App2["アプリケーションサーバー2"]
+
+    Browser --> LB
+    LB --> App1
+    LB --> App2
+```
+
+Chromeでは、HTTP/1.0およびHTTP/1.1について、同じオリジンですでに6本のTCP接続が開いていると、追加リクエストが`Queueing`に入る場合があります。ただし、この6本という値はChromeの実装上の上限であり、HTTP/1.1仕様がすべてのクライアントへ一律に定めた値ではありません。
+
+```text
+同じオリジンへのHTTP/1.1接続
+├── TCP接続1：使用中
+├── TCP接続2：使用中
+├── TCP接続3：使用中
+├── TCP接続4：使用中
+├── TCP接続5：使用中
+├── TCP接続6：使用中
+└── 追加リクエスト：空きが出るまでQueueing
 ```
 
 複数接続にすれば、ある接続の遅いレスポンスが、別の接続を直接待たせることはありません。
@@ -2051,6 +2144,7 @@ flowchart TB
 - 複数ストリームのフレームは、1つの接続上で交互に送信できる
 - HTTP/1.1には、HTTP/2と同じプロトコルレベルのストリームはない
 - HTTP/1.1のパイプラインでは、レスポンスの順番を入れ替えられない
+- HTTP/1.1では、1つのブラウザ・1つのタブでも、複数リソースを並行取得するために複数のTCP接続を開くことがある
 - HTTP/1.1では、並行化のために複数のTCP接続を使うことが多い
 - HTTP/2はHTTPレベルの待ちを改善するが、TCPレベルの待ちは残る
 - ストリームには一定の管理コストがあるが、TCP/TLS接続そのものではない
@@ -2076,6 +2170,7 @@ flowchart TB
 ## 44. 参考資料
 
 - [RFC 9112：HTTP/1.1](https://www.rfc-editor.org/rfc/rfc9112.html)
+- [RFC 6454：The Web Origin Concept](https://www.rfc-editor.org/rfc/rfc6454.html)
 - [RFC 9113：HTTP/2](https://www.rfc-editor.org/rfc/rfc9113.html)
 - [RFC 9113 Section 5：Streams and Multiplexing](https://www.rfc-editor.org/rfc/rfc9113.html#section-5)
 - [RFC 9113 Section 5.1.2：Stream Concurrency](https://www.rfc-editor.org/rfc/rfc9113.html#section-5.1.2)
@@ -2084,4 +2179,5 @@ flowchart TB
 - [RFC 9113 Section 9.1：Connection Management](https://www.rfc-editor.org/rfc/rfc9113.html#section-9.1)
 - [RFC 9113 Section 9.1.1：Connection Reuse](https://www.rfc-editor.org/rfc/rfc9113.html#section-9.1.1)
 - [Chromium：Connection Pools](https://www.chromium.org/developers/design-documents/network-stack/preconnect/)
+- [Chrome DevTools：Timing breakdown phases explained](https://developer.chrome.com/docs/devtools/network/reference/#timing-explanation)
 - [RFC 9114：HTTP/3](https://www.rfc-editor.org/rfc/rfc9114.html)
