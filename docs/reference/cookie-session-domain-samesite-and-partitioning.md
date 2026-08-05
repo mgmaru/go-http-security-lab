@@ -65,8 +65,8 @@ sequenceDiagram
 
     U->>B: ログイン操作
     B->>A: POST /login
-    A-->>B: Set-Cookie: session_id=abc123;<br/>HttpOnly; Secure; SameSite=Lax
-    Note over B: 値と属性をCookieストアに保存
+    A-->>B: Set-Cookieでsession_id=abc123を設定
+    Note over B: 値と属性をCookieストアに保存<br/>属性はHttpOnly・Secure・SameSite=Lax
     U->>B: マイページを開く
     B->>B: URLとCookie属性を照合
     B->>A: GET /mypage<br/>Cookie: session_id=abc123
@@ -235,8 +235,8 @@ sequenceDiagram
 
     B->>A: POST /login
     A->>D: 認証情報を検証
-    D-->>A: user_id=42, role=member
-    A->>A: sub=42, role=member, exp=...へ署名
+    D-->>A: user_id=42・role=member
+    A->>A: sub=42・role=member・exp=...へ署名
     A-->>B: 署名付きトークンを発行
 
     B->>A: GET /mypage<br/>トークンを送信
@@ -554,8 +554,8 @@ sequenceDiagram
 
     U->>B: 銀行へログイン
     B->>BANK: POST /login
-    BANK-->>B: Set-Cookie: session_id=bank123<br/>Secure; HttpOnly; SameSite=Lax
-    Note over B: bank.example.com用Cookieを保存
+    BANK-->>B: Set-Cookieでsession_id=bank123を設定
+    Note over B: bank.example.com用Cookieを保存<br/>属性はSecure・HttpOnly・SameSite=Lax
 
     U->>B: evil.example.netを開く
     B->>EVIL: GET /
