@@ -195,8 +195,6 @@ age: 293097
 ### 2026/7/31
 ### やったこと
 1. NetWorkタブでリクエストを観察
-2. クエリ付きGETを観察
-3. GETとPOST（リクエストおよびレスポンス）を比較
 ### 学んだこと
 #### NetWorkタブでリクエストを観察
 1. やったこと
@@ -464,3 +462,144 @@ External API    20 ms
 - リクエスト単位とAPI単位を区別する必要がある。
 - 1つのポートには複数のTCP接続を確立することができる。
 - ポートは、データの通り道ではなく、OSが「どのアプリケーション宛ての通信か」を判断するための識別番号
+---
+### 2026/8/5
+### やったこと
+1. クエリ付きGETを観察
+2. GETとPOST（リクエストおよびレスポンス）を比較
+### 学んだこと
+#### クエリ付きGETを観察
+1. やったこと
+2. コマンド（クエリあり）：`curl -v 'https://postman-echo.com/get?name=pikachu&limit=10'`
+- 結果
+```curl
+* Host postman-echo.com:443 was resolved.
+* IPv6: 2606:4700:7::21d
+* IPv4: 162.159.142.41
+*   Trying [2606:4700:7::21d]:443...
+* Connected to postman-echo.com (2606:4700:7::21d) port 443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (IN), TLS handshake, Server hello (2):
+* (304) (IN), TLS handshake, Unknown (8):
+* (304) (IN), TLS handshake, Certificate (11):
+* (304) (IN), TLS handshake, CERT verify (15):
+* (304) (IN), TLS handshake, Finished (20):
+* (304) (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=postman-echo.com
+*  start date: Jul 20 18:07:36 2026 GMT
+*  expire date: Oct 18 18:07:35 2026 GMT
+*  subjectAltName: host "postman-echo.com" matched cert's "postman-echo.com"
+*  issuer: C=US; O=Let's Encrypt; CN=YE2
+*  SSL certificate verify ok.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://postman-echo.com/get?name=pikachu&limit=10
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: postman-echo.com]
+* [HTTP/2] [1] [:path: /get?name=pikachu&limit=10]
+* [HTTP/2] [1] [user-agent: curl/8.7.1]
+* [HTTP/2] [1] [accept: */*]
+> GET /get?name=pikachu&limit=10 HTTP/2
+> Host: postman-echo.com
+> User-Agent: curl/8.7.1
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/2 200
+< date: Wed, 05 Aug 2026 10:14:30 GMT
+< content-type: application/json; charset=utf-8
+< content-length: 235
+< etag: W/"eb-3n04W9Bsmn0XWKFwyTo3dI5N5S4"
+< vary: Accept-Encoding
+< x-envoy-upstream-service-time: 5
+< cf-cache-status: DYNAMIC
+< set-cookie: sails.sid=[MASKED]; Path=/; HttpOnly
+< set-cookie: __cf_bm=[MASKED]; HttpOnly; SameSite=None; Secure; Path=/; Domain=postman-echo.com; Expires=Wed, 05 Aug 2026 10:44:30 GMT
+< set-cookie: _cfuvid=[MASKED]; HttpOnly; SameSite=None; Secure; Path=/; Domain=postman-echo.com
+< server: cloudflare
+< cf-ray: a2650908bae441eb-NRT
+<
+* Connection #0 to host postman-echo.com left intact
+{"args":{"name":"pikachu","limit":"10"},"headers":{"host":"postman-echo.com","user-agent":"curl/8.7.1","accept":"*/*","x-forwarded-proto":"https","accept-encoding":"gzip, br"},"url":"https://postman-echo.com/get?name=pikachu&limit=10"}%
+```
+3. コマンド（クエリなし）：`curl -v 'https://postman-echo.com/get'`
+- 結果
+```curl
+* Host postman-echo.com:443 was resolved.
+* IPv6: 2606:4700:7::21d
+* IPv4: 162.159.142.41
+*   Trying [2606:4700:7::21d]:443...
+* Connected to postman-echo.com (2606:4700:7::21d) port 443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (IN), TLS handshake, Server hello (2):
+* (304) (IN), TLS handshake, Unknown (8):
+* (304) (IN), TLS handshake, Certificate (11):
+* (304) (IN), TLS handshake, CERT verify (15):
+* (304) (IN), TLS handshake, Finished (20):
+* (304) (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=postman-echo.com
+*  start date: Jul 20 18:07:36 2026 GMT
+*  expire date: Oct 18 18:07:35 2026 GMT
+*  subjectAltName: host "postman-echo.com" matched cert's "postman-echo.com"
+*  issuer: C=US; O=Let's Encrypt; CN=YE2
+*  SSL certificate verify ok.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://postman-echo.com/get
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: postman-echo.com]
+* [HTTP/2] [1] [:path: /get]
+* [HTTP/2] [1] [user-agent: curl/8.7.1]
+* [HTTP/2] [1] [accept: */*]
+> GET /get HTTP/2
+> Host: postman-echo.com
+> User-Agent: curl/8.7.1
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/2 200
+< date: Wed, 05 Aug 2026 10:40:06 GMT
+< content-type: application/json; charset=utf-8
+< content-length: 184
+< etag: W/"b8-77CLIae7w9ihQmHnHp9LxfpfK/Q"
+< vary: Accept-Encoding
+< x-envoy-upstream-service-time: 5
+< cf-cache-status: DYNAMIC
+< set-cookie: sails.sid=[MASKED]; Path=/; HttpOnly
+< set-cookie: __cf_bm=[MASKED]; HttpOnly; SameSite=None; Secure; Path=/; Domain=postman-echo.com; Expires=Wed, 05 Aug 2026 11:10:06 GMT
+< set-cookie: _cfuvid=[MASKED]; HttpOnly; SameSite=None; Secure; Path=/; Domain=postman-echo.com
+< server: cloudflare
+< cf-ray: a2652e877fb77d99-NRT
+<
+* Connection #0 to host postman-echo.com left intact
+{"args":{},"headers":{"host":"postman-echo.com","user-agent":"curl/8.7.1","accept":"*/*","x-forwarded-proto":"https","accept-encoding":"gzip, br"},"url":"https://postman-echo.com/get"}%
+```
+4. 観察
+- クエリ付き（`'https://postman-echo.com/get?name=pikachu&limit=10'`）とクエリなし（`'https://postman-echo.com/get'`）を比較した
+- クエリ付きおよびクエリなしどちらもメソッド自体は変わらない。
+- リクエストを比較すると、パスの部分だけ違う。
+- レスポンスを見てみると、ボディの部分は`args`に違いが出る。
+- クエリなし
+```
+{"args":{},"headers":{"host":"postman-echo.com","user-agent":"curl/8.7.1","accept":"*/*","x-forwarded-proto":"https","accept-encoding":"gzip, br"},"url":"https://postman-echo.com/get"}
+```
+- クエリあり
+```
+{"args":{"name":"pikachu","limit":"10"},"headers":{"host":"postman-echo.com","user-agent":"curl/8.7.1","accept":"*/*","x-forwarded-proto":"https","accept-encoding":"gzip, br"},"url":"https://postman-echo.com/get?name=pikachu&limit=10"}
+```
+---
+### 2026/8/6
+### やったこと
+1. GETとPOST（リクエストおよびレスポンス）を比較
