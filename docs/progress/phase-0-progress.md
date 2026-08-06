@@ -603,3 +603,214 @@ External API    20 ms
 ### 2026/8/6
 ### やったこと
 1. GETとPOST（リクエストおよびレスポンス）を比較
+2. コマンド
+- GET：`curl -v 'https://httpbingo.org/anything?name=pikachu&limit=10'`
+- POST：`curl -v \
+  -H 'Content-Type: application/json' \
+  --data '{"name":"pikachu","limit":10}' \
+  'https://httpbingo.org/anything'
+`
+3. 結果
+- GET
+```
+* Host httpbingo.org:443 was resolved.
+* IPv6: (none)
+* IPv4: 66.241.125.232
+*   Trying 66.241.125.232:443...
+* Connected to httpbingo.org (66.241.125.232) port 443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (IN), TLS handshake, Server hello (2):
+* (304) (IN), TLS handshake, Unknown (8):
+* (304) (IN), TLS handshake, Certificate (11):
+* (304) (IN), TLS handshake, CERT verify (15):
+* (304) (IN), TLS handshake, Finished (20):
+* (304) (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=httpbingo.org
+*  start date: Jul  5 23:21:17 2026 GMT
+*  expire date: Oct  3 23:21:16 2026 GMT
+*  subjectAltName: host "httpbingo.org" matched cert's "httpbingo.org"
+*  issuer: C=US; O=Let's Encrypt; CN=YE2
+*  SSL certificate verify ok.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://httpbingo.org/anything?name=pikachu&limit=10
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: httpbingo.org]
+* [HTTP/2] [1] [:path: /anything?name=pikachu&limit=10]
+* [HTTP/2] [1] [user-agent: curl/8.7.1]
+* [HTTP/2] [1] [accept: */*]
+> GET /anything?name=pikachu&limit=10 HTTP/2
+> Host: httpbingo.org
+> User-Agent: curl/8.7.1
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/2 200
+< access-control-allow-credentials: true
+< access-control-allow-origin: *
+< content-type: application/json; charset=utf-8
+< date: Thu, 06 Aug 2026 08:43:46 GMT
+< content-length: 716
+< server: Fly/2fa70e089 (2026-08-03)
+< via: 2 fly.io, 2 fly.io
+< fly-request-id: 01KZB3WAH6FD81WWT1Q8HWJFN8-nrt
+<
+{
+  "args": {
+    "limit": [
+      "10"
+    ],
+    "name": [
+      "pikachu"
+    ]
+  },
+  "headers": {
+    "Accept": [
+      "*/*"
+    ],
+    "Host": [
+      "httpbingo.org"
+    ],
+    "User-Agent": [
+      "curl/8.7.1"
+    ],
+    "Via": [
+      "2 fly.io, 2 fly.io"
+    ],
+    "X-Forwarded-For": [
+      "103.5.140.132, 66.241.125.232"
+    ],
+    "X-Forwarded-Port": [
+      "443"
+    ],
+    "X-Forwarded-Proto": [
+      "https"
+    ],
+    "X-Forwarded-Ssl": [
+      "on"
+    ],
+    "X-Request-Start": [
+      "t=1786005826086212"
+    ]
+  },
+  "method": "GET",
+  "origin": "103.5.140.132",
+  "url": "https://httpbingo.org/anything?name=pikachu&limit=10",
+  "data": "",
+  "files": {},
+  "form": {},
+  "json": null
+}
+* Connection #0 to host httpbingo.org left intact
+```
+- POST
+```
+* Host httpbingo.org:443 was resolved.
+* IPv6: (none)
+* IPv4: 66.241.125.232
+*   Trying 66.241.125.232:443...
+* Connected to httpbingo.org (66.241.125.232) port 443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (IN), TLS handshake, Server hello (2):
+* (304) (IN), TLS handshake, Unknown (8):
+* (304) (IN), TLS handshake, Certificate (11):
+* (304) (IN), TLS handshake, CERT verify (15):
+* (304) (IN), TLS handshake, Finished (20):
+* (304) (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=httpbingo.org
+*  start date: Jul  5 23:21:17 2026 GMT
+*  expire date: Oct  3 23:21:16 2026 GMT
+*  subjectAltName: host "httpbingo.org" matched cert's "httpbingo.org"
+*  issuer: C=US; O=Let's Encrypt; CN=YE2
+*  SSL certificate verify ok.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://httpbingo.org/anything
+* [HTTP/2] [1] [:method: POST]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: httpbingo.org]
+* [HTTP/2] [1] [:path: /anything]
+* [HTTP/2] [1] [user-agent: curl/8.7.1]
+* [HTTP/2] [1] [accept: */*]
+* [HTTP/2] [1] [content-type: application/json]
+* [HTTP/2] [1] [content-length: 29]
+> POST /anything HTTP/2
+> Host: httpbingo.org
+> User-Agent: curl/8.7.1
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 29
+>
+* upload completely sent off: 29 bytes
+< HTTP/2 200
+< access-control-allow-credentials: true
+< access-control-allow-origin: *
+< content-type: application/json; charset=utf-8
+< date: Thu, 06 Aug 2026 08:45:45 GMT
+< content-length: 794
+< server: Fly/2fa70e089 (2026-08-03)
+< via: 2 fly.io, 2 fly.io
+< fly-request-id: 01KZB3ZYY77X7EV5AJVQ51G6XF-nrt
+<
+{
+  "args": {},
+  "headers": {
+    "Accept": [
+      "*/*"
+    ],
+    "Content-Length": [
+      "29"
+    ],
+    "Content-Type": [
+      "application/json"
+    ],
+    "Host": [
+      "httpbingo.org"
+    ],
+    "User-Agent": [
+      "curl/8.7.1"
+    ],
+    "Via": [
+      "2 fly.io, 2 fly.io"
+    ],
+    "X-Forwarded-For": [
+      "103.5.140.132, 66.241.125.232"
+    ],
+    "X-Forwarded-Port": [
+      "443"
+    ],
+    "X-Forwarded-Proto": [
+      "https"
+    ],
+    "X-Forwarded-Ssl": [
+      "on"
+    ],
+    "X-Request-Start": [
+      "t=1786005945287618"
+    ]
+  },
+  "method": "POST",
+  "origin": "103.5.140.132",
+  "url": "https://httpbingo.org/anything",
+  "data": "{\"name\":\"pikachu\",\"limit\":10}",
+  "files": {},
+  "form": {},
+  "json": {
+    "limit": 10,
+    "name": "pikachu"
+  }
+}
+* Connection #0 to host httpbingo.org left intact
+```
+4. 観察
