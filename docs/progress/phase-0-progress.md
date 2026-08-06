@@ -684,7 +684,7 @@ External API    20 ms
       "2 fly.io, 2 fly.io"
     ],
     "X-Forwarded-For": [
-      "103.5.140.132, 66.241.125.232"
+      "[MASKED]"
     ],
     "X-Forwarded-Port": [
       "443"
@@ -700,7 +700,7 @@ External API    20 ms
     ]
   },
   "method": "GET",
-  "origin": "103.5.140.132",
+  "origin": "[MASKED]",
   "url": "https://httpbingo.org/anything?name=pikachu&limit=10",
   "data": "",
   "files": {},
@@ -785,7 +785,7 @@ External API    20 ms
       "2 fly.io, 2 fly.io"
     ],
     "X-Forwarded-For": [
-      "103.5.140.132, 66.241.125.232"
+      "[MASKED]"
     ],
     "X-Forwarded-Port": [
       "443"
@@ -801,7 +801,7 @@ External API    20 ms
     ]
   },
   "method": "POST",
-  "origin": "103.5.140.132",
+  "origin": "[MASKED]",
   "url": "https://httpbingo.org/anything",
   "data": "{\"name\":\"pikachu\",\"limit\":10}",
   "files": {},
